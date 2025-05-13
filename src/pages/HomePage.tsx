@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { fetchPosts, fetchTopHeadlines } from "@/services/wordpress-api";
 import { WordPressPost } from "@/types/wordpress";
@@ -7,7 +6,7 @@ import FeaturedSlider from "@/components/FeaturedSlider";
 import HeadlineCard from "@/components/HeadlineCard";
 import ArticleCard from "@/components/ArticleCard";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { AlertCircle, ArrowRight } from "lucide-react";
 
 const HomePage = () => {
   const [featuredPosts, setFeaturedPosts] = useState<WordPressPost[]>([]);

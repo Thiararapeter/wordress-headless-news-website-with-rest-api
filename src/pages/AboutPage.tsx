@@ -1,5 +1,10 @@
 
-import Accordion from "@/components/ui/accordion";
+import { 
+  Accordion, 
+  AccordionContent, 
+  AccordionItem, 
+  AccordionTrigger 
+} from "@/components/ui/accordion";
 import PageTitle from "@/components/PageTitle";
 
 const AboutPage = () => {

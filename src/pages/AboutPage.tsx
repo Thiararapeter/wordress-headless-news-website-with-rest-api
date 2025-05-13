@@ -1,11 +1,11 @@
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { PageTitle } from "@/components/PageTitle";
+import Accordion from "@/components/ui/accordion";
+import PageTitle from "@/components/PageTitle";
 
 const AboutPage = () => {
   return (
     <div className="container mx-auto px-4 py-6">
-      <PageTitle>About TechNews</PageTitle>
+      <PageTitle title="About TechNews"/>
       
       <div className="max-w-3xl mx-auto">
         <div className="space-y-6">

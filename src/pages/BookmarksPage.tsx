@@ -1,11 +1,35 @@
 
 import { useBookmarks } from "@/contexts/BookmarksContext";
 import { Link } from "react-router-dom";
-import { Bookmark } from "lucide-react";
+import { Bookmark, AlertCircle } from "lucide-react";
 import { formatDate } from "@/utils/date-utils";
+import { useState, useEffect } from "react";
 
 const BookmarksPage = () => {
   const { bookmarks, removeBookmark } = useBookmarks();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simple loading simulation to ensure context is properly loaded
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-6 animate-pulse">
+        <h1 className="text-2xl font-bold mb-6">Your Bookmarks</h1>
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="bg-white rounded-lg h-32 shadow-sm"></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-6">

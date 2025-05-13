@@ -41,8 +41,8 @@ const ArticlePage = () => {
         // Fetch related articles from the same category if available
         if (post.categories && post.categories.length > 0) {
           const categoryId = post.categories[0];
-          const related = await fetchPosts(1, 3, categoryId);
-          setRelatedArticles(related.filter(p => p.id !== post.id).slice(0, 3));
+          const related = await fetchPosts(1, 4, categoryId);
+          setRelatedArticles(related.filter(p => p.id !== post.id).slice(0, 4));
         }
       } catch (error) {
         console.error('Error loading article:', error);
@@ -180,9 +180,11 @@ const ArticlePage = () => {
         {relatedArticles.length > 0 && (
           <div className="mt-12">
             <h2 className="text-xl font-bold mb-6">Related Articles</h2>
-            <div className="space-y-6">
+            <div className="flex overflow-x-auto pb-4 space-x-4 scrollbar-hide">
               {relatedArticles.map(post => (
-                <ArticleCard key={post.id} post={post} />
+                <div key={post.id} className="w-72 flex-shrink-0">
+                  <ArticleCard post={post} isCompact={true} />
+                </div>
               ))}
             </div>
           </div>

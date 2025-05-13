@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { fetchPosts, fetchTopHeadlines } from "@/services/wordpress-api";
 import { WordPressPost } from "@/types/wordpress";
 import CategoryTabs from "@/components/CategoryTabs";
-import FeaturedArticle from "@/components/FeaturedArticle";
+import FeaturedSlider from "@/components/FeaturedSlider";
 import HeadlineCard from "@/components/HeadlineCard";
 import ArticleCard from "@/components/ArticleCard";
 import { Link } from "react-router-dom";
@@ -19,18 +19,32 @@ const HomePage = () => {
     const loadInitialData = async () => {
       setIsLoading(true);
       try {
-        // Fetch data in parallel
+        // Fetch data in parallel with more attempts to ensure we get data
+        const fetchWithRetry = async (fetcher: () => Promise<WordPressPost[]>, attempts = 3) => {
+          for (let i = 0; i < attempts; i++) {
+            try {
+              const data = await fetcher();
+              if (data.length > 0) return data;
+              // Short delay before retry
+              await new Promise(resolve => setTimeout(resolve, 500));
+            } catch (err) {
+              console.error("Error in fetch attempt", i + 1, err);
+            }
+          }
+          return [];
+        };
+        
         const [headlinesData, latestData] = await Promise.all([
-          fetchTopHeadlines(5),
-          fetchPosts(1, 7)
+          fetchWithRetry(() => fetchTopHeadlines(5)),
+          fetchWithRetry(() => fetchPosts(1, 7))
         ]);
         
         setTopHeadlines(headlinesData);
         
-        // Use first post as featured if available
+        // Use first 3 posts as featured if available
         if (latestData.length > 0) {
-          setFeaturedPosts([latestData[0]]);
-          setLatestPosts(latestData.slice(1));
+          setFeaturedPosts(latestData.slice(0, 3));
+          setLatestPosts(latestData.slice(3));
         } else {
           setLatestPosts([]);
         }
@@ -74,7 +88,7 @@ const HomePage = () => {
       
       {featuredPosts.length > 0 && (
         <section>
-          <FeaturedArticle post={featuredPosts[0]} />
+          <FeaturedSlider posts={featuredPosts} />
         </section>
       )}
       
@@ -96,11 +110,18 @@ const HomePage = () => {
         
         <div>
           <h2 className="font-bold text-xl mb-4">Top Headlines</h2>
-          <div className="bg-gray-50 rounded-lg p-3">
-            {topHeadlines.map((post, index) => (
-              <HeadlineCard key={post.id} post={post} index={index} />
-            ))}
-          </div>
+          {topHeadlines.length > 0 ? (
+            <div className="bg-gray-50 rounded-lg p-3">
+              {topHeadlines.map((post, index) => (
+                <HeadlineCard key={post.id} post={post} index={index} />
+              ))}
+            </div>
+          ) : (
+            <div className="bg-gray-50 rounded-lg p-6 text-center text-news-secondary">
+              <AlertCircle className="h-8 w-8 mx-auto mb-2 text-news-accent opacity-70" />
+              <p>No headlines available at the moment.</p>
+            </div>
+          )}
           
           <Link 
             to="/trending" 

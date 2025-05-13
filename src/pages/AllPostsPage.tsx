@@ -9,14 +9,23 @@ const AllPostsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   useEffect(() => {
     const loadPosts = async () => {
       try {
         setIsLoading(true);
         const fetchedPosts = await fetchPosts(1, 20);
-        setPosts(fetchedPosts);
-        setHasMore(fetchedPosts.length === 20);
+        
+        if (fetchedPosts.length === 0) {
+          // Try again once if we didn't get any posts
+          const retryPosts = await fetchPosts(1, 20);
+          setPosts(retryPosts);
+          setHasMore(retryPosts.length === 20);
+        } else {
+          setPosts(fetchedPosts);
+          setHasMore(fetchedPosts.length === 20);
+        }
       } catch (error) {
         console.error("Error loading all posts:", error);
       } finally {
@@ -28,10 +37,10 @@ const AllPostsPage = () => {
   }, []);
 
   const loadMore = async () => {
-    if (isLoading || !hasMore) return;
+    if (loadingMore || !hasMore) return;
     
     try {
-      setIsLoading(true);
+      setLoadingMore(true);
       const nextPage = page + 1;
       const morePosts = await fetchPosts(nextPage, 20);
       
@@ -40,11 +49,12 @@ const AllPostsPage = () => {
       } else {
         setPosts(prevPosts => [...prevPosts, ...morePosts]);
         setPage(nextPage);
+        setHasMore(morePosts.length === 20);
       }
     } catch (error) {
       console.error("Error loading more posts:", error);
     } finally {
-      setIsLoading(false);
+      setLoadingMore(false);
     }
   };
 
@@ -56,13 +66,13 @@ const AllPostsPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
           {Array.from({ length: 9 }).map((_, i) => (
             <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="h-48 image-skeleton"></div>
+              <div className="h-48 bg-gray-200"></div>
               <div className="p-4">
-                <div className="h-6 w-3/4 image-skeleton mb-2 rounded"></div>
-                <div className="h-4 w-1/4 image-skeleton mb-3 rounded"></div>
+                <div className="h-6 w-3/4 bg-gray-200 mb-2 rounded"></div>
+                <div className="h-4 w-1/4 bg-gray-200 mb-3 rounded"></div>
                 <div className="space-y-2">
-                  <div className="h-4 image-skeleton rounded"></div>
-                  <div className="h-4 image-skeleton rounded w-5/6"></div>
+                  <div className="h-4 bg-gray-200 rounded"></div>
+                  <div className="h-4 bg-gray-200 rounded w-5/6"></div>
                 </div>
               </div>
             </div>
@@ -80,10 +90,10 @@ const AllPostsPage = () => {
             <div className="mt-8 text-center">
               <button
                 onClick={loadMore}
-                disabled={isLoading}
+                disabled={loadingMore}
                 className="px-4 py-2 bg-news-accent text-white rounded-md hover:bg-red-600 transition-colors disabled:opacity-50"
               >
-                {isLoading ? (
+                {loadingMore ? (
                   <span className="flex items-center justify-center">
                     <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
                     Loading...

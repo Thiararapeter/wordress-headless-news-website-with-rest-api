@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { BookmarkIcon, Grid3x3, LayoutGrid, Menu, SearchIcon } from "lucide-react";
+import { BookmarkIcon, Grid3x3, Home, LayoutGrid, Menu, SearchIcon, TrendingUp, Star, X } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -12,17 +12,19 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar
 } from "@/components/ui/sidebar";
 import { Button } from "./ui/button";
 
 export function AppSidebar() {
   const location = useLocation();
+  const { toggleSidebar, isMobile } = useSidebar();
   
   const mainMenuItems = [
     {
       title: "Home",
       url: "/",
-      icon: LayoutGrid,
+      icon: Home,
     },
     {
       title: "All Posts",
@@ -45,10 +47,12 @@ export function AppSidebar() {
     {
       title: "Trending",
       url: "/trending",
+      icon: TrendingUp,
     },
     {
       title: "Featured",
       url: "/featured",
+      icon: Star,
     },
   ];
 
@@ -60,6 +64,11 @@ export function AppSidebar() {
             <Menu className="h-6 w-6 text-news-accent" />
             <h1 className="text-xl font-bold">NewsApp</h1>
           </Link>
+          {isMobile && (
+            <Button variant="ghost" size="icon" onClick={toggleSidebar} className="lg:hidden">
+              <X className="h-5 w-5" />
+            </Button>
+          )}
         </div>
       </SidebarHeader>
       
@@ -98,6 +107,7 @@ export function AppSidebar() {
                     isActive={location.pathname === item.url}
                   >
                     <Link to={item.url}>
+                      <item.icon className="h-5 w-5" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -117,4 +127,4 @@ export function AppSidebar() {
       </SidebarFooter>
     </Sidebar>
   );
-}
+};

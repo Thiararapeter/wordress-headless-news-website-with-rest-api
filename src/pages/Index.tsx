@@ -1,13 +1,29 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useState } from "react";
+import SplashScreen from "@/components/SplashScreen";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import HomePage from "@/pages/HomePage";
+import { BookmarksProvider } from "@/contexts/BookmarksContext";
 
 const Index = () => {
+  const [showSplash, setShowSplash] = useState(true);
+
+  const handleSplashFinish = () => {
+    setShowSplash(false);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <BookmarksProvider>
+      {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow">
+          <HomePage />
+        </main>
+        <Footer />
       </div>
-    </div>
+    </BookmarksProvider>
   );
 };
 

@@ -1,4 +1,3 @@
-
 import { WordPressCategory, WordPressPost } from "@/types/wordpress";
 
 // Set this to your WordPress site URL
@@ -31,7 +30,7 @@ export async function fetchPosts(
   }
 }
 
-export async function fetchTopHeadlines(count = 5): Promise<WordPressPost[]> {
+export async function fetchTopHeadlines(count = 12): Promise<WordPressPost[]> {
   try {
     // Try sticky posts first, if that fails, fall back to recent posts
     const url = `${API_URL}/posts?_embed=true&per_page=${count}&sticky=true`;

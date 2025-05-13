@@ -14,7 +14,7 @@ const TrendingPage = () => {
     const loadTrendingPosts = async () => {
       setIsLoading(true);
       try {
-        const posts = await fetchTopHeadlines(15);
+        const posts = await fetchTopHeadlines(12);
         setTrendingPosts(posts);
       } catch (error) {
         console.error("Error loading trending posts:", error);

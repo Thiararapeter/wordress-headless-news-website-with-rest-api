@@ -3,29 +3,35 @@ import { useState, useEffect } from "react";
 import { fetchPosts } from "@/services/wordpress-api";
 import { WordPressPost } from "@/types/wordpress";
 import ArticleCard from "@/components/ArticleCard";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const AllPostsPage = () => {
   const [posts, setPosts] = useState<WordPressPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const postsPerPage = 12;
 
   useEffect(() => {
     const loadPosts = async () => {
       try {
         setIsLoading(true);
-        const fetchedPosts = await fetchPosts(1, 20);
+        const fetchedPosts = await fetchPosts(currentPage, postsPerPage);
         
-        if (fetchedPosts.length === 0) {
-          // Try again once if we didn't get any posts
-          const retryPosts = await fetchPosts(1, 20);
-          setPosts(retryPosts);
-          setHasMore(retryPosts.length === 20);
-        } else {
-          setPosts(fetchedPosts);
-          setHasMore(fetchedPosts.length === 20);
-        }
+        // Get total count from headers if available
+        const totalPosts = 100; // Fallback if we can't get the total
+        const calculatedTotalPages = Math.ceil(totalPosts / postsPerPage);
+        setTotalPages(calculatedTotalPages);
+        
+        setPosts(fetchedPosts);
       } catch (error) {
         console.error("Error loading all posts:", error);
       } finally {
@@ -34,28 +40,110 @@ const AllPostsPage = () => {
     };
 
     loadPosts();
-  }, []);
+    // Scroll to top when page changes
+    window.scrollTo(0, 0);
+  }, [currentPage]);
 
-  const loadMore = async () => {
-    if (loadingMore || !hasMore) return;
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const renderPagination = () => {
+    if (totalPages <= 1) return null;
+
+    const pageItems = [];
+    const maxVisiblePages = 5;
     
-    try {
-      setLoadingMore(true);
-      const nextPage = page + 1;
-      const morePosts = await fetchPosts(nextPage, 20);
-      
-      if (morePosts.length === 0) {
-        setHasMore(false);
-      } else {
-        setPosts(prevPosts => [...prevPosts, ...morePosts]);
-        setPage(nextPage);
-        setHasMore(morePosts.length === 20);
-      }
-    } catch (error) {
-      console.error("Error loading more posts:", error);
-    } finally {
-      setLoadingMore(false);
+    // Always show first page
+    pageItems.push(
+      <PaginationItem key="first">
+        <PaginationLink 
+          onClick={() => goToPage(1)}
+          isActive={currentPage === 1}
+        >
+          1
+        </PaginationLink>
+      </PaginationItem>
+    );
+
+    // Show ellipsis if needed
+    if (currentPage > 3) {
+      pageItems.push(
+        <PaginationItem key="ellipsis-start">
+          <PaginationEllipsis />
+        </PaginationItem>
+      );
     }
+
+    // Calculate range of visible page numbers
+    let startPage = Math.max(2, currentPage - 1);
+    let endPage = Math.min(totalPages - 1, currentPage + 1);
+    
+    // Adjust if at the start or end
+    if (currentPage <= 3) {
+      endPage = Math.min(totalPages - 1, maxVisiblePages - 1);
+    } else if (currentPage >= totalPages - 2) {
+      startPage = Math.max(2, totalPages - maxVisiblePages + 2);
+    }
+    
+    // Add visible page numbers
+    for (let i = startPage; i <= endPage; i++) {
+      pageItems.push(
+        <PaginationItem key={i}>
+          <PaginationLink 
+            onClick={() => goToPage(i)}
+            isActive={currentPage === i}
+          >
+            {i}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+
+    // Show ellipsis if needed
+    if (currentPage < totalPages - 2) {
+      pageItems.push(
+        <PaginationItem key="ellipsis-end">
+          <PaginationEllipsis />
+        </PaginationItem>
+      );
+    }
+
+    // Always show last page if there's more than one page
+    if (totalPages > 1) {
+      pageItems.push(
+        <PaginationItem key="last">
+          <PaginationLink 
+            onClick={() => goToPage(totalPages)}
+            isActive={currentPage === totalPages}
+          >
+            {totalPages}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+
+    return (
+      <Pagination className="mt-8">
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious 
+              onClick={() => goToPage(Math.max(1, currentPage - 1))}
+              className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+            />
+          </PaginationItem>
+          
+          {pageItems}
+          
+          <PaginationItem>
+            <PaginationNext 
+              onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
+              className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    );
   };
 
   return (
@@ -64,7 +152,7 @@ const AllPostsPage = () => {
       
       {isLoading && posts.length === 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
-          {Array.from({ length: 9 }).map((_, i) => (
+          {Array.from({ length: postsPerPage }).map((_, i) => (
             <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden">
               <div className="h-48 bg-gray-200"></div>
               <div className="p-4">
@@ -86,24 +174,7 @@ const AllPostsPage = () => {
             ))}
           </div>
           
-          {hasMore && (
-            <div className="mt-8 text-center">
-              <button
-                onClick={loadMore}
-                disabled={loadingMore}
-                className="px-4 py-2 bg-news-accent text-white rounded-md hover:bg-red-600 transition-colors disabled:opacity-50"
-              >
-                {loadingMore ? (
-                  <span className="flex items-center justify-center">
-                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
-                    Loading...
-                  </span>
-                ) : (
-                  "Load More"
-                )}
-              </button>
-            </div>
-          )}
+          {renderPagination()}
         </>
       )}
     </div>

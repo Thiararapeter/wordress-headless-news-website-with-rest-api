@@ -5,12 +5,17 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { BookmarksProvider } from "@/contexts/BookmarksContext";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 import Index from "./pages/Index";
 import ArticlePage from "./pages/ArticlePage";
 import CategoryPage from "./pages/CategoryPage";
 import SearchPage from "./pages/SearchPage";
 import BookmarksPage from "./pages/BookmarksPage";
 import NotificationsPage from "./pages/NotificationsPage";
+import AllPostsPage from "./pages/AllPostsPage";
+import TrendingPage from "./pages/TrendingPage";
+import FeaturedPage from "./pages/FeaturedPage";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -24,55 +29,29 @@ const App = () => (
       <Sonner />
       <BookmarksProvider>
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/article/:slug" element={
-              <div className="min-h-screen flex flex-col">
+          <SidebarProvider>
+            <div className="flex w-full min-h-screen">
+              <AppSidebar />
+              <div className="flex flex-col flex-1">
                 <Navbar />
                 <main className="flex-grow">
-                  <ArticlePage />
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/article/:slug" element={<ArticlePage />} />
+                    <Route path="/category/:slug" element={<CategoryPage />} />
+                    <Route path="/search" element={<SearchPage />} />
+                    <Route path="/bookmarks" element={<BookmarksPage />} />
+                    <Route path="/notifications" element={<NotificationsPage />} />
+                    <Route path="/all-posts" element={<AllPostsPage />} />
+                    <Route path="/trending" element={<TrendingPage />} />
+                    <Route path="/featured" element={<FeaturedPage />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
                 </main>
                 <Footer />
               </div>
-            } />
-            <Route path="/category/:slug" element={
-              <div className="min-h-screen flex flex-col">
-                <Navbar />
-                <main className="flex-grow">
-                  <CategoryPage />
-                </main>
-                <Footer />
-              </div>
-            } />
-            <Route path="/search" element={
-              <div className="min-h-screen flex flex-col">
-                <Navbar />
-                <main className="flex-grow">
-                  <SearchPage />
-                </main>
-                <Footer />
-              </div>
-            } />
-            <Route path="/bookmarks" element={
-              <div className="min-h-screen flex flex-col">
-                <Navbar />
-                <main className="flex-grow">
-                  <BookmarksPage />
-                </main>
-                <Footer />
-              </div>
-            } />
-            <Route path="/notifications" element={
-              <div className="min-h-screen flex flex-col">
-                <Navbar />
-                <main className="flex-grow">
-                  <NotificationsPage />
-                </main>
-                <Footer />
-              </div>
-            } />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+            </div>
+          </SidebarProvider>
         </BrowserRouter>
       </BookmarksProvider>
     </TooltipProvider>

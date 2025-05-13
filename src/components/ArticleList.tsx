@@ -64,8 +64,8 @@ const ArticleList = ({ initialPosts, categoryId }: ArticleListProps) => {
 
   if (posts.length === 0 && isLoading) {
     return (
-      <div className="space-y-6">
-        {Array.from({ length: 3 }).map((_, index) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Array.from({ length: 6 }).map((_, index) => (
           <div key={index} className="bg-white rounded-lg shadow-sm overflow-hidden">
             <div className="h-48 image-skeleton"></div>
             <div className="p-4">
@@ -84,7 +84,7 @@ const ArticleList = ({ initialPosts, categoryId }: ArticleListProps) => {
 
   return (
     <div>
-      <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {posts.map(post => (
           <ArticleCard key={post.id} post={post} />
         ))}

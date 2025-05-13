@@ -4,8 +4,10 @@ import { fetchPosts, fetchTopHeadlines } from "@/services/wordpress-api";
 import { WordPressPost } from "@/types/wordpress";
 import CategoryTabs from "@/components/CategoryTabs";
 import FeaturedArticle from "@/components/FeaturedArticle";
-import ArticleList from "@/components/ArticleList";
 import HeadlineCard from "@/components/HeadlineCard";
+import ArticleCard from "@/components/ArticleCard";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 const HomePage = () => {
   const [featuredPosts, setFeaturedPosts] = useState<WordPressPost[]>([]);
@@ -20,7 +22,7 @@ const HomePage = () => {
         // Fetch data in parallel
         const [headlinesData, latestData] = await Promise.all([
           fetchTopHeadlines(5),
-          fetchPosts(1, 5)
+          fetchPosts(1, 7)
         ]);
         
         setTopHeadlines(headlinesData);
@@ -48,15 +50,18 @@ const HomePage = () => {
         <div className="h-8 w-40 bg-gray-200 mb-4 rounded"></div>
         <div className="h-64 bg-gray-200 rounded-xl mb-8"></div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="md:col-span-2 space-y-6">
-            <div className="h-48 bg-gray-200 rounded-lg"></div>
-            <div className="h-48 bg-gray-200 rounded-lg"></div>
+          <div className="md:col-span-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="h-64 bg-gray-200 rounded-lg"></div>
+              ))}
+            </div>
           </div>
           <div className="space-y-4">
             <div className="h-6 w-24 bg-gray-200 rounded mb-2"></div>
-            <div className="h-16 bg-gray-200 rounded-lg"></div>
-            <div className="h-16 bg-gray-200 rounded-lg"></div>
-            <div className="h-16 bg-gray-200 rounded-lg"></div>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <div key={index} className="h-16 bg-gray-200 rounded-lg"></div>
+            ))}
           </div>
         </div>
       </div>
@@ -73,19 +78,36 @@ const HomePage = () => {
         </section>
       )}
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
         <div className="md:col-span-2">
-          <h2 className="font-bold text-xl mb-4">Latest News</h2>
-          <ArticleList initialPosts={latestPosts} />
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-bold text-xl">Latest News</h2>
+            <Link to="/all-posts" className="flex items-center text-news-accent hover:underline text-sm">
+              View all <ArrowRight className="h-4 w-4 ml-1" />
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {latestPosts.slice(0, 6).map((post) => (
+              <ArticleCard key={post.id} post={post} />
+            ))}
+          </div>
         </div>
         
-        <div className="mt-6 md:mt-0">
+        <div>
           <h2 className="font-bold text-xl mb-4">Top Headlines</h2>
           <div className="bg-gray-50 rounded-lg p-3">
             {topHeadlines.map((post, index) => (
               <HeadlineCard key={post.id} post={post} index={index} />
             ))}
           </div>
+          
+          <Link 
+            to="/trending" 
+            className="mt-4 block text-center py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-news-accent"
+          >
+            View more headlines
+          </Link>
         </div>
       </div>
     </div>

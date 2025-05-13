@@ -16,6 +16,7 @@ import NotificationsPage from "./pages/NotificationsPage";
 import AllPostsPage from "./pages/AllPostsPage";
 import TrendingPage from "./pages/TrendingPage";
 import FeaturedPage from "./pages/FeaturedPage";
+import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -45,6 +46,7 @@ const App = () => (
                     <Route path="/all-posts" element={<AllPostsPage />} />
                     <Route path="/trending" element={<TrendingPage />} />
                     <Route path="/featured" element={<FeaturedPage />} />
+                    <Route path="/about" element={<AboutPage />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </main>

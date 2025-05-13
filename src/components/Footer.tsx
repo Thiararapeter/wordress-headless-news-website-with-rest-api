@@ -19,28 +19,28 @@ const Footer = () => {
             <div>
               <h3 className="font-semibold mb-3 text-news-primary">Navigation</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link to="/" className="text-news-secondary hover:text-news-accent">Home</Link></li>
-                <li><Link to="/categories" className="text-news-secondary hover:text-news-accent">Categories</Link></li>
-                <li><Link to="/bookmarks" className="text-news-secondary hover:text-news-accent">Bookmarks</Link></li>
-                <li><Link to="/search" className="text-news-secondary hover:text-news-accent">Search</Link></li>
+                <li><Link to="/" className="text-news-secondary hover:text-news-accent transition-colors">Home</Link></li>
+                <li><Link to="/all-posts" className="text-news-secondary hover:text-news-accent transition-colors">All Posts</Link></li>
+                <li><Link to="/bookmarks" className="text-news-secondary hover:text-news-accent transition-colors">Bookmarks</Link></li>
+                <li><Link to="/search" className="text-news-secondary hover:text-news-accent transition-colors">Search</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-3 text-news-primary">Categories</h3>
+              <h3 className="font-semibold mb-3 text-news-primary">Discover</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link to="/category/technology" className="text-news-secondary hover:text-news-accent">Technology</Link></li>
-                <li><Link to="/category/startups" className="text-news-secondary hover:text-news-accent">Startups</Link></li>
-                <li><Link to="/category/apps" className="text-news-secondary hover:text-news-accent">Apps</Link></li>
-                <li><Link to="/category/gadgets" className="text-news-secondary hover:text-news-accent">Gadgets</Link></li>
+                <li><Link to="/trending" className="text-news-secondary hover:text-news-accent transition-colors">Trending</Link></li>
+                <li><Link to="/featured" className="text-news-secondary hover:text-news-accent transition-colors">Featured</Link></li>
+                <li><Link to="/category/technology" className="text-news-secondary hover:text-news-accent transition-colors">Technology</Link></li>
+                <li><Link to="/category/startups" className="text-news-secondary hover:text-news-accent transition-colors">Startups</Link></li>
               </ul>
             </div>
             <div className="col-span-2 md:col-span-1">
               <h3 className="font-semibold mb-3 text-news-primary">About</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link to="/about" className="text-news-secondary hover:text-news-accent">About Us</Link></li>
-                <li><Link to="/privacy" className="text-news-secondary hover:text-news-accent">Privacy Policy</Link></li>
-                <li><Link to="/terms" className="text-news-secondary hover:text-news-accent">Terms of Service</Link></li>
-                <li><Link to="/contact" className="text-news-secondary hover:text-news-accent">Contact</Link></li>
+                <li><Link to="/about" className="text-news-secondary hover:text-news-accent transition-colors">About Us</Link></li>
+                <li><Link to="/privacy" className="text-news-secondary hover:text-news-accent transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="text-news-secondary hover:text-news-accent transition-colors">Terms of Service</Link></li>
+                <li><Link to="/contact" className="text-news-secondary hover:text-news-accent transition-colors">Contact</Link></li>
               </ul>
             </div>
           </div>

@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { BookmarkIcon, Grid3x3, Home, LayoutGrid, Menu, SearchIcon, TrendingUp, Star, X } from "lucide-react";
+import { BookmarkIcon, ChevronLeft, ChevronRight, Grid3x3, Home, LayoutGrid, Menu, SearchIcon, TrendingUp, Star, X } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -15,10 +15,15 @@ import {
   useSidebar
 } from "@/components/ui/sidebar";
 import { Button } from "./ui/button";
+import { useState } from "react";
 
 export function AppSidebar() {
   const location = useLocation();
-  const { toggleSidebar, isMobile } = useSidebar();
+  const { toggleSidebar, isMobile, state } = useSidebar();
+  const [isMainNavOpen, setIsMainNavOpen] = useState(true);
+  const [isDiscoverOpen, setIsDiscoverOpen] = useState(true);
+  
+  const isExpanded = state === "expanded";
   
   const mainMenuItems = [
     {
@@ -56,6 +61,14 @@ export function AppSidebar() {
     },
   ];
 
+  const toggleMainNav = () => {
+    setIsMainNavOpen(!isMainNavOpen);
+  };
+
+  const toggleDiscover = () => {
+    setIsDiscoverOpen(!isDiscoverOpen);
+  };
+
   return (
     <Sidebar className="border-r border-border">
       <SidebarHeader>
@@ -74,57 +87,97 @@ export function AppSidebar() {
       
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Main Navigation</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {mainMenuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    tooltip={item.title}
-                    isActive={location.pathname === item.url}
-                  >
-                    <Link to={item.url}>
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
+          <div className="flex items-center justify-between px-2">
+            <SidebarGroupLabel>Main Navigation</SidebarGroupLabel>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-6 w-6"
+              onClick={toggleMainNav}
+            >
+              {isMainNavOpen ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+          
+          {isMainNavOpen && (
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {mainMenuItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      tooltip={item.title}
+                      isActive={location.pathname === item.url}
+                    >
+                      <Link to={item.url}>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          )}
         </SidebarGroup>
         
         <SidebarGroup>
-          <SidebarGroupLabel>Discover</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {otherPages.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    tooltip={item.title}
-                    isActive={location.pathname === item.url}
-                  >
-                    <Link to={item.url}>
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
+          <div className="flex items-center justify-between px-2">
+            <SidebarGroupLabel>Discover</SidebarGroupLabel>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-6 w-6"
+              onClick={toggleDiscover}
+            >
+              {isDiscoverOpen ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+          
+          {isDiscoverOpen && (
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {otherPages.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      tooltip={item.title}
+                      isActive={location.pathname === item.url}
+                    >
+                      <Link to={item.url}>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          )}
         </SidebarGroup>
       </SidebarContent>
       
       <SidebarFooter className="border-t border-sidebar-border">
         <div className="p-4">
-          <Button variant="outline" className="w-full">
-            About
-          </Button>
+          <Link to="/about">
+            <Button variant="outline" className="w-full">
+              About
+            </Button>
+          </Link>
         </div>
       </SidebarFooter>
     </Sidebar>
   );
 };
+
+function ChevronDown(props: React.ComponentProps<typeof ChevronLeft>) {
+  return <ChevronLeft className="rotate-90" {...props} />;
+}

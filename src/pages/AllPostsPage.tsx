@@ -16,6 +16,7 @@ import {
 const AllPostsPage = () => {
   const [posts, setPosts] = useState<WordPressPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState(false); // For animated loading when paging
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const postsPerPage = 12;
@@ -23,38 +24,37 @@ const AllPostsPage = () => {
   useEffect(() => {
     const loadPosts = async () => {
       try {
-        setIsLoading(true);
+        if (currentPage !== 1) setPageLoading(true);
+        else setIsLoading(true);
         const fetchedPosts = await fetchPosts(currentPage, postsPerPage);
-        
-        // Get total count from headers if available
+
+        // Get total count from headers if available (simulate with fallback)
         const totalPosts = 100; // Fallback if we can't get the total
         const calculatedTotalPages = Math.ceil(totalPosts / postsPerPage);
         setTotalPages(calculatedTotalPages);
-        
+
         setPosts(fetchedPosts);
       } catch (error) {
         console.error("Error loading all posts:", error);
       } finally {
         setIsLoading(false);
+        setPageLoading(false);
       }
     };
 
     loadPosts();
-    // Scroll to top when page changes
     window.scrollTo(0, 0);
   }, [currentPage]);
 
   const goToPage = (page: number) => {
-    setCurrentPage(page);
+    if (page !== currentPage) setCurrentPage(page);
   };
 
   const renderPagination = () => {
     if (totalPages <= 1) return null;
-
     const pageItems = [];
     const maxVisiblePages = 5;
-    
-    // Always show first page
+
     pageItems.push(
       <PaginationItem key="first">
         <PaginationLink 
@@ -66,27 +66,18 @@ const AllPostsPage = () => {
       </PaginationItem>
     );
 
-    // Show ellipsis if needed
     if (currentPage > 3) {
-      pageItems.push(
-        <PaginationItem key="ellipsis-start">
-          <PaginationEllipsis />
-        </PaginationItem>
-      );
+      pageItems.push(<PaginationItem key="ellipsis-start"><PaginationEllipsis /></PaginationItem>);
     }
 
-    // Calculate range of visible page numbers
     let startPage = Math.max(2, currentPage - 1);
     let endPage = Math.min(totalPages - 1, currentPage + 1);
-    
-    // Adjust if at the start or end
     if (currentPage <= 3) {
       endPage = Math.min(totalPages - 1, maxVisiblePages - 1);
     } else if (currentPage >= totalPages - 2) {
       startPage = Math.max(2, totalPages - maxVisiblePages + 2);
     }
-    
-    // Add visible page numbers
+
     for (let i = startPage; i <= endPage; i++) {
       pageItems.push(
         <PaginationItem key={i}>
@@ -100,16 +91,10 @@ const AllPostsPage = () => {
       );
     }
 
-    // Show ellipsis if needed
     if (currentPage < totalPages - 2) {
-      pageItems.push(
-        <PaginationItem key="ellipsis-end">
-          <PaginationEllipsis />
-        </PaginationItem>
-      );
+      pageItems.push(<PaginationItem key="ellipsis-end"><PaginationEllipsis /></PaginationItem>);
     }
 
-    // Always show last page if there's more than one page
     if (totalPages > 1) {
       pageItems.push(
         <PaginationItem key="last">
@@ -132,9 +117,7 @@ const AllPostsPage = () => {
               className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
             />
           </PaginationItem>
-          
           {pageItems}
-          
           <PaginationItem>
             <PaginationNext 
               onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
@@ -149,8 +132,7 @@ const AllPostsPage = () => {
   return (
     <div className="container mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold mb-6">All Posts</h1>
-      
-      {isLoading && posts.length === 0 ? (
+      {(isLoading || pageLoading) && posts.length === 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
           {Array.from({ length: postsPerPage }).map((_, i) => (
             <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden">
@@ -168,12 +150,11 @@ const AllPostsPage = () => {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${pageLoading ? "animate-pulse" : ""}`}>
             {posts.map(post => (
               <ArticleCard key={post.id} post={post} />
             ))}
           </div>
-          
           {renderPagination()}
         </>
       )}

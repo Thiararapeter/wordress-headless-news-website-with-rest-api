@@ -3,10 +3,16 @@ import { WordPressPost } from "@/types/wordpress";
 import { formatDate } from "@/utils/date-utils";
 import { generateExcerpt } from "@/utils/html-utils";
 import { useBookmarks } from "@/contexts/BookmarksContext";
-import { BookmarkPlus, BookmarkCheck, Share } from "lucide-react";
+import { BookmarkPlus, BookmarkCheck, Share, Heart } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import ShareMenu from "./ShareMenu";
+
+// Fake storage for demo purpose, use react state only
+const getRandomReactions = (id: number) => {
+  // Deterministically random for demo
+  return (id * 47) % 23 + 5;
+};
 
 interface ArticleCardProps {
   post: WordPressPost;
@@ -17,17 +23,17 @@ interface ArticleCardProps {
 const ArticleCard = ({ post, showImage = true, isCompact = false }: ArticleCardProps) => {
   const { isBookmarked, addBookmark, removeBookmark } = useBookmarks();
   const [showShareMenu, setShowShareMenu] = useState(false);
-  
+  const [reactions, setReactions] = useState(getRandomReactions(post.id));
+  const [userReacted, setUserReacted] = useState(false);
+
   const imageUrl = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url || '';
   const categoryName = post._embedded?.["wp:term"]?.[0]?.[0]?.name || '';
-  
   const excerpt = generateExcerpt(post.excerpt.rendered, isCompact ? 80 : 150);
   const bookmarked = isBookmarked(post.id);
 
   const handleBookmarkToggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
     if (bookmarked) {
       removeBookmark(post.id);
     } else {
@@ -52,6 +58,15 @@ const ArticleCard = ({ post, showImage = true, isCompact = false }: ArticleCardP
 
   const handleShareClose = () => {
     setShowShareMenu(false);
+  };
+
+  const handleReact = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!userReacted) {
+      setReactions(r => r + 1);
+      setUserReacted(true);
+    }
   };
 
   return (
@@ -98,6 +113,16 @@ const ArticleCard = ({ post, showImage = true, isCompact = false }: ArticleCardP
                 aria-label="Share article"
               >
                 <Share className="w-5 h-5 text-gray-500" />
+              </button>
+              <button
+                onClick={handleReact}
+                className={`p-1 rounded-full ${userReacted ? 'bg-pink-100' : 'hover:bg-gray-100'}`}
+                aria-label="React to post"
+              >
+                <Heart className={`w-5 h-5 ${userReacted ? 'text-pink-600' : 'text-gray-400'}`} /> 
+                <span className="ml-1 text-xs text-gray-500">
+                  {reactions}
+                </span>
               </button>
             </div>
           </div>

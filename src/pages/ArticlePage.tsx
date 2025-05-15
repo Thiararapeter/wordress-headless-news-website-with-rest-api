@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchPostBySlug, fetchPosts } from "@/services/wordpress-api";
 import { WordPressPost } from "@/types/wordpress";
@@ -9,6 +9,9 @@ import { useBookmarks } from "@/contexts/BookmarksContext";
 import ArticleCard from "@/components/ArticleCard";
 import { generateExcerpt } from "@/utils/html-utils";
 import ShareMenu from "@/components/ShareMenu";
+import RelatedCarousel from "@/components/RelatedCarousel";
+import ReadProgressBar from "@/components/ReadProgressBar";
+import ReadingTime from "@/components/ReadingTime";
 
 const ArticlePage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -18,6 +21,7 @@ const ArticlePage = () => {
   const [showShareMenu, setShowShareMenu] = useState(false);
   const navigate = useNavigate();
   const { isBookmarked, addBookmark, removeBookmark } = useBookmarks();
+  const articleContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadArticle = async () => {
@@ -26,23 +30,24 @@ const ArticlePage = () => {
       setIsLoading(true);
       try {
         const post = await fetchPostBySlug(slug);
-        
+
         if (!post) {
           navigate('/not-found');
           return;
         }
-        
+
         setArticle(post);
-        
+
         // Update document title
         const title = new DOMParser().parseFromString(post.title.rendered, 'text/html').body.textContent;
         document.title = `${title} | TechNews`;
-        
+
         // Fetch related articles from the same category if available
         if (post.categories && post.categories.length > 0) {
           const categoryId = post.categories[0];
-          const related = await fetchPosts(1, 4, categoryId);
-          setRelatedArticles(related.filter(p => p.id !== post.id).slice(0, 4));
+          const related = await fetchPosts(1, 6, categoryId); // fetch more for possible filtering
+          // Filter out current, slice to 5
+          setRelatedArticles(related.filter(p => p.id !== post.id).slice(0, 5));
         }
       } catch (error) {
         console.error('Error loading article:', error);
@@ -52,11 +57,9 @@ const ArticlePage = () => {
     };
 
     loadArticle();
-    
-    // Scroll to top when article changes
+
     window.scrollTo(0, 0);
-    
-    // Reset title when component unmounts
+
     return () => {
       document.title = 'TechNews';
     };
@@ -66,7 +69,7 @@ const ArticlePage = () => {
     if (!article) return;
 
     const bookmarked = isBookmarked(article.id);
-    
+
     if (bookmarked) {
       removeBookmark(article.id);
     } else {
@@ -113,7 +116,8 @@ const ArticlePage = () => {
   const bookmarked = isBookmarked(article.id);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 relative">
+      <ReadProgressBar targetRef={articleContentRef} />
       <div className="max-w-3xl mx-auto">
         <article>
           {categoryName && (
@@ -121,17 +125,17 @@ const ArticlePage = () => {
               {categoryName}
             </span>
           )}
-          
           <h1 
             className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3"
             dangerouslySetInnerHTML={{ __html: article.title.rendered }}
           />
-          
           <div className="flex items-center justify-between mb-6">
-            <div className="text-news-secondary text-sm">
-              {formatPostDate(article.date)}
+            <div className="flex flex-col">
+              <span className="text-news-secondary text-sm">
+                {formatPostDate(article.date)}
+              </span>
+              <ReadingTime html={article.content.rendered} className="text-news-secondary text-xs mt-1" />
             </div>
-            
             <div className="flex space-x-2">
               <button
                 onClick={() => setShowShareMenu(!showShareMenu)}
@@ -146,7 +150,6 @@ const ArticlePage = () => {
                   />
                 )}
               </button>
-              
               <button
                 onClick={handleBookmarkToggle}
                 className="p-2 rounded-full hover:bg-gray-100"
@@ -160,7 +163,6 @@ const ArticlePage = () => {
               </button>
             </div>
           </div>
-          
           {imageUrl && (
             <div className="mb-8">
               <img 
@@ -170,23 +172,16 @@ const ArticlePage = () => {
               />
             </div>
           )}
-          
           <div 
             className="prose prose-lg max-w-none"
             dangerouslySetInnerHTML={{ __html: article.content.rendered }}
+            ref={articleContentRef}
           />
         </article>
-        
         {relatedArticles.length > 0 && (
           <div className="mt-12">
             <h2 className="text-xl font-bold mb-6">Related Articles</h2>
-            <div className="flex overflow-x-auto pb-4 space-x-4 scrollbar-hide">
-              {relatedArticles.map(post => (
-                <div key={post.id} className="w-72 flex-shrink-0">
-                  <ArticleCard post={post} isCompact={true} />
-                </div>
-              ))}
-            </div>
+            <RelatedCarousel posts={relatedArticles} />
           </div>
         )}
       </div>

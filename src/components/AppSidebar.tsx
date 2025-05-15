@@ -1,19 +1,22 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Home, Search, BookmarkPlus, TrendingUp, Star } from "lucide-react";
+import { Home, Search, BookmarkPlus, TrendingUp, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import SidebarCollapsibleSection from "./SidebarCollapsibleSection";
 import { cn } from "@/lib/utils";
+import { useSidebar } from "@/components/ui/sidebar";
 
 export function AppSidebar() {
   const location = useLocation();
-  
+  const { state, toggleSidebar } = useSidebar();
+
   const mainNavLinks = [
     { name: "Home", path: "/", icon: Home },
     { name: "All Posts", path: "/all-posts", icon: Home },
@@ -32,10 +35,24 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar>
+    <Sidebar collapsible="offcanvas">
       <SidebarRail />
-      <SidebarHeader className="p-4">
+      {/* Collapsible trigger */}
+      <SidebarTrigger className="absolute top-2 right-2 md:hidden" />
+      <SidebarHeader className="p-4 flex justify-between items-center">
         <h1 className="text-xl font-bold text-news-accent">NewsApp</h1>
+        {/* Desktop toggle (collapse/expand) */}
+        <button
+          aria-label={state === "expanded" ? "Collapse sidebar" : "Expand sidebar"}
+          onClick={toggleSidebar}
+          className="hidden md:flex items-center justify-center p-1 rounded hover:bg-gray-100 transition"
+        >
+          {state === "expanded" ? (
+            <ChevronLeft className="w-5 h-5 text-gray-600" />
+          ) : (
+            <ChevronRight className="w-5 h-5 text-gray-600" />
+          )}
+        </button>
       </SidebarHeader>
       <SidebarContent>
         <SidebarCollapsibleSection title="Main Navigation" defaultOpen={true}>

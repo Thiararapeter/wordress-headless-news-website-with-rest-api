@@ -12,6 +12,7 @@ import ShareMenu from "@/components/ShareMenu";
 import RelatedCarousel from "@/components/RelatedCarousel";
 import ReadProgressBar from "@/components/ReadProgressBar";
 import ReadingTime from "@/components/ReadingTime";
+import { SidebarTrigger } from "@/components/ui/sidebar"; // We'll use this in the main layout, not here
 
 const ArticlePage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -117,9 +118,11 @@ const ArticlePage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 relative">
-      <ReadProgressBar targetRef={articleContentRef} />
+      {/* Only render ReadProgressBar right above the article content */}
       <div className="max-w-3xl mx-auto">
         <article>
+          {/* Read Progress Bar attached to content */}
+          <ReadProgressBar targetRef={articleContentRef} />
           {categoryName && (
             <span className="inline-block bg-news-accent text-white text-xs px-3 py-1 rounded-md mb-3">
               {categoryName}

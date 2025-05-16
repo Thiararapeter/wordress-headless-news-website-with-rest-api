@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchPostBySlug, fetchPosts } from "@/services/wordpress-api";
@@ -108,7 +107,7 @@ const ArticlePage = () => {
           {/* Main content area (80%) */}
           <div className="md:col-span-4 w-full relative">
             <div className="bg-white dark:bg-[#23243a] px-4 py-7 md:p-10 rounded-2xl shadow-xl border border-news-border/70 fade-in mb-8">
-              {/* Top meta and text-to-audio */}
+              {/* Top meta */}
               <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
                 <ArticleMeta
                   date={article.date}
@@ -116,7 +115,6 @@ const ArticlePage = () => {
                   authorName={authorName}
                   categoryName={categoryName}
                 />
-                <PostTextToAudioButton text={`${article.title.rendered}. ${mainContentHtml.replace(/<[^>]+>/g, ' ')}`} />
               </div>
               <h1
                 className="text-3xl md:text-5xl font-extrabold leading-tight mb-5 text-news-primary dark:text-white"
@@ -141,10 +139,10 @@ const ArticlePage = () => {
               </div>
             )}
           </div>
-          {/* Sidebar (20%) */}
+          {/* Sidebar (20%) - improved UI and width */}
           <div className="md:col-span-1">
             <div className="sticky top-10">
-              <ArticleSidebar excludeId={article.id} categoryId={article.categories?.[0]} title="Recent Posts" />
+              <ArticleSidebar excludeId={article.id} categoryId={article.categories?.[0]} title="Recent Posts" customCard />
             </div>
           </div>
         </div>

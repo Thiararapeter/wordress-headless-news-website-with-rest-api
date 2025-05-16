@@ -8,9 +8,15 @@ interface ArticleSidebarProps {
   excludeId?: number;
   categoryId?: number;
   title?: string;
+  customCard?: boolean;
 }
 
-const ArticleSidebar = ({ excludeId, categoryId, title = "Related Posts" }: ArticleSidebarProps) => {
+const ArticleSidebar = ({
+  excludeId,
+  categoryId,
+  title = "Related Posts",
+  customCard = false
+}: ArticleSidebarProps) => {
   const [posts, setPosts] = useState<WordPressPost[]>([]);
 
   useEffect(() => {
@@ -32,13 +38,21 @@ const ArticleSidebar = ({ excludeId, categoryId, title = "Related Posts" }: Arti
     );
   }
 
+  // Improved Recent Posts list
   return (
-    <aside className="w-full flex flex-col gap-3">
-      <h3 className="text-base font-bold text-news-primary mb-2 px-1">{title}</h3>
-      <div className="flex flex-col gap-4">
+    <aside className="w-full">
+      <h3 className="text-base font-bold text-news-primary mb-4 px-2">{title}</h3>
+      <div className={`flex flex-col gap-5`}>
         {posts.map((post) => (
-          <div key={post.id}>
-            <ArticleCard post={post} isCompact />
+          <div
+            key={post.id}
+            className="rounded-2xl bg-white shadow-[0_1px_10px_rgba(68,68,90,0.05)] border border-news-border px-3 pb-3 pt-3 transition-all hover:shadow-md"
+          >
+            <ArticleCard
+              post={post}
+              showImage={true}
+              isCompact={true}
+            />
           </div>
         ))}
       </div>

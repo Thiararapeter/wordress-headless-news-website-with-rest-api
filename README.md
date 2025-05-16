@@ -1,73 +1,47 @@
-# Welcome to your Lovable project
 
-## Project info
+# TechNews – A Modern Tech News Aggregator
 
 **URL**: https://lovable.dev/projects/499e01dc-f3cb-4730-81e5-a318efc576a1
 
-## How can I edit this code?
+## Project Overview
 
-There are several ways of editing your application.
+TechNews is a modern technology news aggregator built with React, TypeScript, Tailwind CSS, and shadcn/ui components, connecting to the TechCrunch WordPress API. It aims to deliver a beautiful, fast, and smooth reading experience for the latest tech articles. It features a collapsible sidebar, elegant post detail views with reading progress and reading time indicators, bookmarking capability, related articles carousel, responsive layout, and more.
 
-**Use Lovable**
+## Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/499e01dc-f3cb-4730-81e5-a318efc576a1) and start prompting.
+- Browse the latest and trending tech news fetched live from the TechCrunch WordPress API.
+- Responsive, modern design powered by Tailwind CSS and shadcn/ui’s component library.
+- Post detail pages with reading progress indicator and calculated reading time.
+- Collapsible sidebar for categories and navigation.
+- Bookmark system to save your favorite articles.
+- Search, filter, and discover articles by category or trending/featured lists.
+- Share articles via integrated ShareMenu.
+- Related articles carousel on each post detail view.
+- Animated and informative loading states.
 
-Changes made via Lovable will be committed automatically to this repo.
+## Technologies Used
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
 - React
-- shadcn-ui
+- TypeScript
+- Vite
 - Tailwind CSS
+- shadcn/ui component library
+- WordPress REST API (TechCrunch)
+- Lucide icons
 
-## How can I deploy this project?
+## How to Run Locally
 
-Simply open [Lovable](https://lovable.dev/projects/499e01dc-f3cb-4730-81e5-a318efc576a1) and click on Share -> Publish.
+1. Clone this repository.
+2. Navigate to the project directory and run `npm install`.
+3. Start the development server with `npm run dev`.
 
-## Can I connect a custom domain to my Lovable project?
+## How to Deploy
 
-Yes, you can!
+You can publish this project easily via Lovable. Click Share → Publish in the Lovable UI.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+For custom domains, go to Project → Settings → Domains.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## About
+
+TechNews was created to provide a seamless and delightful way to keep up with technology news, highlighting great content in a beautiful and interactive format.
+

@@ -118,11 +118,10 @@ const ArticlePage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 relative">
-      {/* Move ReadProgressBar outside of the main content box to ensure always visible */}
-      <ReadProgressBar targetRef={articleContentRef} />
       <div className="max-w-3xl mx-auto">
+        {/* Only render ReadProgressBar above the article content area, so it does not float at sidebar level. */}
+        <ReadProgressBar targetRef={articleContentRef} />
         <article>
-          {/* No longer render ReadProgressBar here, just above */}
           {categoryName && (
             <span className="inline-block bg-news-accent text-white text-xs px-3 py-1 rounded-md mb-3">
               {categoryName}

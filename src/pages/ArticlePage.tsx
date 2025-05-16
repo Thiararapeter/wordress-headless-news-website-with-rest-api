@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchPostBySlug, fetchPosts } from "@/services/wordpress-api";
@@ -13,6 +12,9 @@ import RelatedCarousel from "@/components/RelatedCarousel";
 import ReadProgressBar from "@/components/ReadProgressBar";
 import ReadingTime from "@/components/ReadingTime";
 import { SidebarTrigger } from "@/components/ui/sidebar"; // We'll use this in the main layout, not here
+import ArticleMeta from "@/components/ArticleMeta";
+import ArticleActionsBar from "@/components/ArticleActionsBar";
+import BackToTopButton from "@/components/BackToTopButton";
 
 const ArticlePage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -114,78 +116,66 @@ const ArticlePage = () => {
 
   const imageUrl = article._embedded?.["wp:featuredmedia"]?.[0]?.source_url || '';
   const categoryName = article._embedded?.["wp:term"]?.[0]?.[0]?.name || '';
-  const bookmarked = isBookmarked(article.id);
+  const authorName = article._embedded?.["author"]?.[0]?.name || "TechCrunch";
 
   return (
-    <div className="container mx-auto px-4 py-8 relative">
-      <div className="max-w-3xl mx-auto">
-        {/* Only render ReadProgressBar above the article content area, so it does not float at sidebar level. */}
-        <ReadProgressBar targetRef={articleContentRef} />
-        <article>
-          {categoryName && (
-            <span className="inline-block bg-news-accent text-white text-xs px-3 py-1 rounded-md mb-3">
-              {categoryName}
-            </span>
-          )}
-          <h1 
-            className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3"
-            dangerouslySetInnerHTML={{ __html: article.title.rendered }}
-          />
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex flex-col">
-              <span className="text-news-secondary text-sm">
-                {formatPostDate(article.date)}
-              </span>
-              <ReadingTime html={article.content.rendered} className="text-news-secondary text-xs mt-1" />
-            </div>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => setShowShareMenu(!showShareMenu)}
-                className="p-2 rounded-full hover:bg-gray-100 relative"
-                aria-label="Share article"
-              >
-                <Share className="w-5 h-5 text-gray-600" />
-                {showShareMenu && (
-                  <ShareMenu 
-                    post={article}
-                    onClose={() => setShowShareMenu(false)}
-                  />
-                )}
-              </button>
-              <button
-                onClick={handleBookmarkToggle}
-                className="p-2 rounded-full hover:bg-gray-100"
-                aria-label={bookmarked ? "Remove from bookmarks" : "Add to bookmarks"}
-              >
-                {bookmarked ? (
-                  <BookmarkCheck className="w-5 h-5 text-news-accent" />
-                ) : (
-                  <BookmarkPlus className="w-5 h-5 text-gray-600" />
-                )}
-              </button>
-            </div>
-          </div>
+    <div className="relative min-h-screen bg-gradient-to-br from-[#f0f3fa] to-[#fffced] dark:from-[#22243a] dark:to-[#181927] transition-colors py-8 px-1">
+      <div className="container mx-auto px-0 max-w-3xl">
+        <div className="relative z-10 rounded-2xl bg-white dark:bg-[#23243a] shadow-xl border border-news-border/60 overflow-hidden mb-10 fade-in">
+          {/* Article image */}
           {imageUrl && (
-            <div className="mb-8">
+            <div className="relative h-64 md:h-96 w-full overflow-hidden">
               <img 
-                src={imageUrl} 
+                src={imageUrl}
                 alt={article._embedded?.["wp:featuredmedia"]?.[0]?.alt_text || article.title.rendered}
-                className="w-full rounded-xl"
+                className="object-cover w-full h-full transition-transform duration-700 scale-105 hover:scale-110 group"
+                style={{
+                  maskImage: "linear-gradient(to bottom,black 90%,transparent 100%)",
+                  WebkitMaskImage: "linear-gradient(to bottom,black 90%,transparent 100%)"
+                }}
               />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-white/90 dark:to-[#23243a] pointer-events-none"></div>
             </div>
           )}
-          <div 
-            className="prose prose-lg max-w-none"
-            dangerouslySetInnerHTML={{ __html: article.content.rendered }}
-            ref={articleContentRef}
-          />
-        </article>
+          <div className="px-6 py-8 md:py-10">
+            {/* Category badge floating above the content */}
+            {categoryName && (
+              <span className="inline-flex items-center gap-1 bg-news-accent/90 text-white text-xs font-bold px-3 py-1 mb-4 rounded-md shadow-sm uppercase tracking-wide">
+                {categoryName}
+              </span>
+            )}
+            <h1
+              className="text-3xl md:text-5xl font-extrabold leading-tight mb-4 text-news-primary dark:text-white"
+              dangerouslySetInnerHTML={{ __html: article.title.rendered }}
+            />
+            <ArticleMeta
+              date={article.date}
+              html={article.content.rendered}
+              authorName={authorName}
+              categoryName={categoryName}
+            />
+            <div 
+              className="prose prose-lg dark:prose-invert max-w-none mt-8"
+              dangerouslySetInnerHTML={{ __html: article.content.rendered }}
+              ref={articleContentRef}
+            />
+          </div>
+        </div>
+        {/* Related articles */}
         {relatedArticles.length > 0 && (
-          <div className="mt-12">
-            <h2 className="text-xl font-bold mb-6">Related Articles</h2>
+          <div className="mt-10">
+            <h2 className="text-xl font-bold mb-6 text-news-primary dark:text-white">Related Articles</h2>
             <RelatedCarousel posts={relatedArticles} />
           </div>
         )}
+      </div>
+      {/* Floating Action Bar */}
+      <ArticleActionsBar article={article} />
+      {/* Back To Top */}
+      <BackToTopButton />
+      {/* Progress Bar over article */}
+      <div className="fixed top-0 left-0 w-full z-40">
+        <ReadProgressBar targetRef={articleContentRef} />
       </div>
     </div>
   );

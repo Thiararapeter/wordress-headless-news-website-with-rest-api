@@ -20,6 +20,11 @@ import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ContactPage from "./pages/ContactPage";
+import TopicsPage from "./pages/TopicsPage";
+import LeadersPage from "./pages/LeadersPage";
+import CommunityPage from "./pages/CommunityPage";
+import DashboardPage from "./pages/DashboardPage";
+import SettingsPage from "./pages/SettingsPage";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +51,11 @@ const App = () => (
                     <Route path="/all-posts" element={<AllPostsPage />} />
                     <Route path="/trending" element={<TrendingPage />} />
                     <Route path="/featured" element={<FeaturedPage />} />
+                    <Route path="/topics" element={<TopicsPage />} />
+                    <Route path="/leaders" element={<LeadersPage />} />
+                    <Route path="/community" element={<CommunityPage />} />
+                    <Route path="/dashboard" element={<DashboardPage />} />
+                    <Route path="/settings" element={<SettingsPage />} />
                     <Route path="/about" element={<AboutPage />} />
                     <Route path="/contact" element={<ContactPage />} />
                     <Route path="*" element={<NotFound />} />

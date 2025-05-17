@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Home, Search, BookmarkPlus, TrendingUp, Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { TrendingUp, Star, ChevronLeft, ChevronRight, Grid, Settings, Users, Heart, LayoutDashboard } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -17,16 +17,16 @@ export function AppSidebar() {
   const location = useLocation();
   const { state, toggleSidebar } = useSidebar();
 
-  const mainNavLinks = [
-    { name: "Home", path: "/", icon: Home },
-    { name: "All Posts", path: "/all-posts", icon: Home },
-    { name: "Search", path: "/search", icon: Search },
-    { name: "Bookmarks", path: "/bookmarks", icon: BookmarkPlus },
-  ];
+  // No more MainNavLinks - moved to Navbar
 
   const discoverLinks = [
     { name: "Trending", path: "/trending", icon: TrendingUp },
     { name: "Featured", path: "/featured", icon: Star },
+    { name: "Topics", path: "/topics", icon: Grid },              // Example new
+    { name: "Leaders", path: "/leaders", icon: Users },            // Example new
+    { name: "Community", path: "/community", icon: Heart },        // Example new
+    { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard }, // Example new
+    { name: "Settings", path: "/settings", icon: Settings },       // Example new
   ];
 
   const isActive = (path: string) => {
@@ -55,24 +55,7 @@ export function AppSidebar() {
         </button>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarCollapsibleSection title="Main Navigation" defaultOpen={true}>
-          {mainNavLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={cn(
-                "flex items-center px-4 py-2 text-sm rounded-md transition-colors",
-                isActive(link.path)
-                  ? "bg-news-accent text-white font-medium"
-                  : "text-gray-700 hover:bg-gray-100"
-              )}
-            >
-              <link.icon className="mr-3 h-5 w-5" />
-              {link.name}
-            </Link>
-          ))}
-        </SidebarCollapsibleSection>
-
+        {/* Discover section has more links/features */}
         <SidebarCollapsibleSection title="Discover" defaultOpen={true}>
           {discoverLinks.map((link) => (
             <Link

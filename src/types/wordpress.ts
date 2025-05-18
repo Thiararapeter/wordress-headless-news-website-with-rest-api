@@ -1,4 +1,3 @@
-
 export interface WordPressPost {
   id: number;
   date: string;
@@ -26,6 +25,7 @@ export interface WordPressPost {
   link: string;
   categories: number[];
   slug: string;
+  acf?: Record<string, any>;
 }
 
 export interface WordPressCategory {

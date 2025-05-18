@@ -1,7 +1,7 @@
 import { WordPressCategory, WordPressPost } from "@/types/wordpress";
 
 // Set this to your WordPress site URL
-const API_URL = "https://techcrunch.com/wp-json/wp/v2";
+const API_URL = "https://thiarara.co.ke/wp-json/wp/v2";
 
 export async function fetchPosts(
   page = 1,
